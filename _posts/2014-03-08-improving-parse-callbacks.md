@@ -40,14 +40,16 @@ public class FindCallback <T extends ParseObject, U> extends com.parse.FindCallb
 }
 ```
 
-Would be used like in your activity:
+FindCallback keeps a weak reference to the Activity, Fragment, or whatever other object you want. This allows the garbage collector to still do it's job and prevent memory leaks, but it also let's you handle the case in which your Activity no longer exists.
+
+For example, in your Activity:
 
 ```java
 ParseQuery<ParseUser> query = ParseUser.getQuery();
 query.findInBackground(new FindCallback<ParseUser, Activity>(this) {
     @Override
-    public void done(List<ParseUser> list, Activity a, ParseException e) {
-        if (a != null) {
+    public void done(List<ParseUser> list, Activity activity, ParseException e) {
+        if (activity != null) {
             if (e == null) {
                 // display list of users
             } else {
@@ -57,5 +59,7 @@ query.findInBackground(new FindCallback<ParseUser, Activity>(this) {
     }
 });
 ```
+
+This pattern can easily be extended to CountCallback, DeleteCallback, etc...
 
 The Parse Android SDK does save a lof of work in most cases. However, if I were to tackle this project again, I would probably have used their REST API in combination with [Retrofit](http://square.github.io/retrofit/) or [Volley](https://android.googlesource.com/platform/frameworks/volley/).
