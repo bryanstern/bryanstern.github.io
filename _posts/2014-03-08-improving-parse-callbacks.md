@@ -60,6 +60,6 @@ query.findInBackground(new FindCallback<ParseUser, Activity>(this) {
 });
 ```
 
-This pattern can easily be extended to CountCallback, DeleteCallback, etc...
+This pattern can easily be extended to [CountCallback](https://www.parse.com/docs/android/api/com/parse/CountCallback.html), [DeleteCallback](https://www.parse.com/docs/android/api/com/parse/DeleteCallback.html), etc...
 
 The Parse Android SDK does save a lof of work in most cases. However, if I were to tackle this project again, I would probably have used their REST API in combination with [Retrofit](http://square.github.io/retrofit/) or [Volley](https://android.googlesource.com/platform/frameworks/volley/).
