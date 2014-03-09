@@ -3,7 +3,7 @@ layout: post
 title: Better ParseCallbacks 
 ---
 
-I recently built an Android app using [Parse](http://www.parse.com) as my mBaaS (mobile backend as a service). It is a pretty coool service and while it does have it's issues, it certainly saves a lot of time when you are just worried about getting an MVP to market.
+I recently built an Android app using [Parse](http://www.parse.com) as my mBaaS (mobile backend as a service). It is a pretty cool service and while it does have it's issues, it certainly saves a lot of time when you are just worried about getting an MVP to market.
 
 One common problem faced by Android developers is handling the callbacks from threads started from Activities and Fragments. Here is a little snippet I used to work around the issue I faced when ParseCallback would execute on an Activity or Fragment that has been garbage collected.
 
