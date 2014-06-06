@@ -8,9 +8,7 @@ I recently contacted [Coinbase](https://www.coinbase.com) about some security vu
 ## SSL Certificate Verfication
 Coinbase [wisely recommends](https://coinbase.com/docs/api/authentication#security) that all clients of their API should validate the SSL certificate presented to prevent MITM attacks. However, they fail to do this in their own Android applications.
 
-This opens up the possibility for someone to use SSL Pinning (installing an additional certificate authority on the Android device) to enable a MITM attack. This can be used to view their *client_id* and *client_secret*. It is very easy to install an additional certificate authority on a device. This is trivial to perform using a tool like [Charles Proxy](http://www.charlesproxy.com/).
-
-This also leaves the open the possibility of a spoofed SSL certificate being presented by the MITM. A spoofed certificate could be a SSL Certificate with a valid signing chain whose root siging certificate authority is already installed on the device. For example, a certificate from Verisign instead of from DigiCert (Coinbase's actual certificate authority). This type of SSL attack first published by [Moxie Marlinspike](http://www.thoughtcrime.org/papers/null-prefix-attacks.pdf). In this case, no additional certificate authority would need to be installed on the victim's device.
+This leaves open the opportunity for a MITM to present a spoofed SSL certificate. A spoofed certificate could be a SSL Certificate with a valid signing chain whose root siging certificate authority is already installed on the device. For example, a certificate from Verisign instead of from DigiCert (Coinbase's actual certificate authority). In this case, no additional certificate authority would need to be installed on the victim's device. However, if the attacker has access to the device, it is very easy to install an additional certificate authority which the spoofed SSL certificate would have been signed by.
 
 ## API Key Security
 Coinbase has failed to adequately protect their application's API *client_id* and *client_secret*. They are published in the [source code on GitHub](https://github.com/coinbase/coinbase-android) and visible during the authentication process if a [man in the middle attack](http://en.wikipedia.org/wiki/Man-in-the-middle_attack) (MITM) is established, which I've outlined above.
@@ -57,18 +55,14 @@ CF-RAY: 114a21e0dc560502-SEA
 
 ```
 
+### Modifying & Repeating
+With a *client_secret* exposed, requests can be resigned with a valid signature ([documentation here](https://coinbase.com/docs/api/authentication#hmac)) allowing the attacker to repeat or modify requests.
+
 ## Putting It All Together
-Beause an attacker has a valid *client_id*, valid *client_secret*, and the ability to defeat the application's SSL connection, requests can be viewed, repeated, and modified by an attacker. The attacker can also use these vulnerabilities make API requests at a later time using an *access_token* stolen during a authentication response.
+Because an attacker has a valid *client_id*, valid *client_secret*, and the ability to defeat the application's SSL connection, requests can be viewed, repeated, and modified by an attacker. The attacker can also use these vulnerabilities make API requests at a later time using an *access_token* stolen during a authentication response.
 
-### Modifying
-With a *client_secret* exposed, requests can be resigned with a valid signature ([documentation here](https://coinbase.com/docs/api/authentication#hmac)).
-
-### Repeating
-At the time of writing, the Coinbase Android applications **do not** make use of a *nonce* or *request signatures*, so it is not even necessary for SSL to be compromised in order to repeat requests. Even if Coinbase had made use of them, generating a new *nonce* and resigning the request is trivial.
-
-### Potential Harm
-* Without the SSL connection being compromised, simply repeating requests could allow an attacker to repeat payments to an address, requests to sell bitcoin, or requests to buy bitcoin.
-* With a compromised SSL connection, an attacker could gain full control of a user's account.
+## Potential Harm
+With a compromised SSL connection, an attacker could gain full control of a user's account by stealing their access token. An attacker could also intercept a request to send bitcoins and change both the amount and destination address. In short however, they pretty much have full access to the victim's account.
 
 ## Recommendations to Coinbase Users
 * Discontinue using the [Coinbase Bitcoin Wallet](https://play.google.com/store/apps/details?id=com.coinbase.android) and [Coinbase Merchant](https://play.google.com/store/apps/details?id=com.coinbase.android.merchant) apps until Coinbase uses a new *client_id* and *client_secret* and begins to verify SSL certificates in its applications.
@@ -79,11 +73,15 @@ At the time of writing, the Coinbase Android applications **do not** make use of
 * Issue new a new *client_id* and *client_secret* for your applications and keep these confidential.
 * Use code obfuscation (e.g. ProGuard) to hide important keys if their APK is decompiled.
 * Validate SSL connections in your applcation as outlined [here](http://developer.android.com/training/articles/security-ssl.html) and as suggested in your [documentation](https://coinbase.com/docs/api/authentication#security).
-* Make use of your new API which supports nonce and request signing.
+* Make use of your API's improved [authentication}(https://coinbase.com/docs/api/authentication#oauth2) which supports nonce and request signing and stop using your [deprecated authentication](https://coinbase.com/docs/api/authentication#api_key).
 
 ## Timeline of Disclosure
 * 2014-03-11 - Vulnerabilities first disclosed to coinbase via whitehat@coinbase.com
 * 2014-03-14 - Follow up email sent
 * 2014-03-14 - Julian Langschaedel of Coinbase responds and dismisses the SSL issues. Does not address others.
 * 2014-03-14 - Two more follow up emails are sent to whitehat@coinbase.com and Julian in regards to issues not responded to.
-* 2014-04-01 - The final draft of this post is sent to whitehat@coinbase.com to give them another attempt to address this internally before it is disclosed to the public.
+* 2014-04-01 - A draft of this post is sent to whitehat@coinbase.com to give them another attempt to address this internally before it is disclosed to the public.
+* 2014-04-04 - After receiving a response from the Coinbase Security team, a [report](https://hackerone.com/reports/5786) is opened on HackerOne.
+* 2014-04-07 - After some discussion and confirming that SSL Pinning is on the roadmap, Coinbase confirms that this is on their roadmap, closes the report as "Won't Fix", and awards me $100.
+* 2014-05-07 - HackerOne system publicly discloses my report.
+* 2014-06-05 - SSL Pinning and OAuth2 request authentication still not implemented on Version 2.2 of Coinbase's app, the latest version of the app.
