@@ -3,7 +3,7 @@ layout: post
 title: Coinbase Android Security Vulnerabilities
 ---
 
-I contacted [Coinbase](https://www.coinbase.com) about some security vulnerabilities in their [Bitcoin Wallet](https://play.google.com/store/apps/details?id=com.coinbase.android) and [Coinbase Merchant](https://play.google.com/store/apps/details?id=com.coinbase.android.merchant) apps via their [white hat program](https://coinbase.com/whitehat). Sadly, they disagreed with the security issues I brought to their attention. Fortunately, these issues are very easy to resolve and I have strongly urged them to do so. I am disclosing them here to alert the public of these security risks and so their users will can take necessary action protect their money.
+I contacted [Coinbase](https://www.coinbase.com) about some security vulnerabilities in their [Bitcoin Wallet](https://play.google.com/store/apps/details?id=com.coinbase.android) and [Coinbase Merchant](https://play.google.com/store/apps/details?id=com.coinbase.android.merchant) apps via their [white hat program](https://coinbase.com/whitehat). Sadly, they disagreed with the security issues I brought to their attention. Fortunately, these issues are very easy to resolve and I have strongly urged them to do so. I am disclosing them here to alert the public of these security risks and so their users can take necessary action protect their money.
 
 ## SSL Certificate Verfication
 Coinbase [wisely recommends](https://coinbase.com/docs/api/authentication#security) that all clients of their API should validate the SSL certificate presented to prevent MITM attacks. However, they fail to do this in their own Android applications.
