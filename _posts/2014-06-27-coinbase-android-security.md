@@ -84,4 +84,4 @@ With a compromised SSL connection, an attacker could gain full control of a user
 * 2014-04-04 - After receiving a response from the Coinbase Security team, a [report](https://hackerone.com/reports/5786) is opened on HackerOne.
 * 2014-04-07 - After some discussion and confirming that SSL Pinning is on the roadmap, Coinbase confirms that this is on their roadmap, closes the report as "Won't Fix", and awards me $100.
 * 2014-05-07 - HackerOne system publicly discloses my report.
-* 2014-06-26 - SSL Pinning and OAuth2 request authentication still not implemented on Version 2.2 of Coinbase's app, the latest version of the app.
+* 2014-06-27 - SSL Pinning and OAuth2 request authentication still not implemented on Version 2.2 of Coinbase's app, the latest version of the app.
